@@ -190,12 +190,69 @@ JOIN
 
 6- Selezionare categorie e classificazioni PEGI dei videogiochi che hanno ricevuto recensioni da 4 e 5 stelle, mostrandole una sola volta (3363)
 
+	use videogames_db;
+	select distinct v.name, pl.name, c.name 
+	from videogames v 
+	join category_videogame cv 
+	on cv.videogame_id = v.id 
+	join categories c 
+	on c.id = cv.category_id 
+	join pegi_label_videogame plv 
+	on plv.videogame_id = v.id 
+	join pegi_labels pl 
+	on pl.id = plv.pegi_label_id 
+	join reviews r 	
+	on r.videogame_id = v.id 
+	where r.rating between 4 and 5;
+
 7- Selezionare quali giochi erano presenti nei tornei nei quali hanno partecipato i giocatori il cui nome inizia per 'S' (474)
+
+	use videogames_db;
+	select distinct v.*
+	from videogames v 
+	join tournament_videogame tv
+	on tv.videogame_id = v.id 
+	join tournaments t 
+	on t.id = tv.tournament_id 
+	join player_tournament pt 
+	on pt.tournament_id = t.id 
+	join players p 
+	on p.id = pt.player_id 
+	where p.name like "S%";
 
 8- Selezionare le città in cui è stato giocato il gioco dell'anno del 2018 (36)
 
+	use videogames_db;
+	select t.city
+	from videogames v 
+	join award_videogame av 
+	on av.videogame_id  = v.id 
+	join awards a 
+	on a.id = av.award_id 
+	join tournament_videogame tv 
+	on tv.videogame_id  = v.id 
+	join tournaments t 
+	on t.id = tv.tournament_id 
+	where a.id = 1 and t.`year` like "2018";
+
 9- Selezionare i giocatori che hanno giocato al gioco più atteso del 2018 in un torneo del 2019 (3306)
 
+	use videogames_db;
+	select p.* 
+	from videogames v  
+	join tournament_videogame tv 
+	on tv.videogame_id = v.id 
+	join tournaments t 
+	on t.id = tv.tournament_id 
+	join award_videogame av 
+	on av.videogame_id = v.id 
+	join awards a 
+	on a.id = av.award_id 
+	join player_tournament pt 
+	on pt.tournament_id = t.id 
+	join players p 
+	on p.id = pt.player_id 
+	where a.id = 5 and year(v.release_date) = 2018 and t.`year` = 2019;
 
 *********** BONUS ***********
 
